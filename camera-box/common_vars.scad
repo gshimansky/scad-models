@@ -11,9 +11,9 @@ board_elements_height = 2.0;
 
 // Lens dimensions
 lens_box_distance_from_board_edge = 11.0;
-lens_box_size = 15.8;
-lens_screw_head_diameter = 3.2;
-lens_screw_offset = 9.3;
+lens_box_size = 16.6;
+lens_screw_head_diameter = 4.5;
+lens_screw_offset = 9.8;
 box_eyelet_size = 4;
 box_eyelet_thickness = 3.2;
 
@@ -23,6 +23,7 @@ screw_depth = 9.0;
 screw_wall_thickness = board_hole_center_distance_from_board_edge - screw_diameter / 2;
 screw_well_x_offset = board_size / 2 - board_hole_center_distance_from_board_edge;
 screw_well_z_offset = board_size / 2 - board_hole_center_distance_from_board_edge;
+board_extra_size = wall_thickness - screw_wall_thickness;
 
 // Wire parameters
 wire_diameter = 6.3;
@@ -31,22 +32,22 @@ socket_width = 10.8;
 socket_height = 10.8;
 
 // Bolt parameters
-nut_diameter = 6.2;
+nut_diameter = 6.4;
 nut_height = 2.4;
-bolt_diameter = 2.8;
+bolt_diameter = 2.8 +  extra_space;
 bolt_well_wall_thickness = 1.0;
 bolt_well_diameter_wide = nut_diameter / cos(180 / 6) + bolt_well_wall_thickness * 2;
 bolt_well_diameter_narrow = bolt_diameter + bolt_well_wall_thickness * 2;
 bolt_well_height = screw_depth + board_thickness + board_elements_height;
-bolt_well_x_offset = board_size / 2 + extra_space + bolt_well_diameter_wide / 2;
+bolt_well_x_offset = board_size / 2 + board_extra_size + bolt_well_diameter_wide / 2;
 bolt_well_y_offset = board_thickness + board_elements_height;
-bolt_well_z_offset = board_size / 2 - bolt_well_diameter_wide / 2 + extra_space;
+bolt_well_z_offset = board_size / 2 - bolt_well_diameter_wide / 2 + board_extra_size;
 bolt_hole_y_offset = -bolt_well_height;
 
 // Tail dimension
 tail_x_dim = socket_width + wall_thickness * 2;
 tail_y_dim = wire_length + wall_thickness;
-tail_z_dim = socket_height + wall_thickness + extra_space;
+tail_z_dim = socket_height + wall_thickness + board_extra_size;
 
 // Hinge
 hinge_length = 10.0;
@@ -90,20 +91,20 @@ module tail() {
         }
         translate([tail_x_dim, tail_y_dim / 3, 0]) bolt_hole(true);
         translate([0, tail_y_dim / 3 * 2, 0]) bolt_hole(true);
-        translate([socket_width / 2 + wall_thickness, 50, socket_height / 2]) rotate(a=[90, 0, 0]) cylinder($fn = 24, d = wire_diameter, h = 100);
+        translate([socket_width / 2 + wall_thickness, 50, socket_height / 2 + board_extra_size]) rotate(a=[90, 0, 0]) cylinder($fn = 24, d = wire_diameter, h = 100);
     }
 }
 
 module socket_cutout() {
-    cube(size = [socket_width, tail_y_dim, socket_height + extra_space], center=true);
+    cube(size = [socket_width, tail_y_dim, socket_height + board_extra_size], center=true);
 }
 
 module horizontal_wall() {
-    translate([0, bolt_well_height / 2 + wall_thickness, wall_thickness / 2]) cube(size = [board_size + extra_space * 2 + bolt_well_diameter_wide * 2 + wall_thickness * 2, wall_thickness + bolt_well_height + wall_thickness, wall_thickness], center=true);
+    translate([0, bolt_well_height / 2 + wall_thickness, wall_thickness / 2]) cube(size = [board_size + board_extra_size * 2 + bolt_well_diameter_wide * 2 + wall_thickness * 2, wall_thickness + bolt_well_height + wall_thickness, wall_thickness], center=true);
 }
 
 module side_wall() {
-    translate([0, -wall_thickness - bolt_well_height, -board_size / 2 - extra_space - wall_thickness]) cube(size = [wall_thickness, wall_thickness + bolt_well_height + wall_thickness, board_size + extra_space * 2 + wall_thickness * 2]);
+    translate([0, -wall_thickness - bolt_well_height, -board_size / 2 - board_extra_size - wall_thickness]) cube(size = [wall_thickness, wall_thickness + bolt_well_height + wall_thickness, board_size + board_extra_size * 2 + wall_thickness * 2]);
 }
 
 module hinge_block(cylinder_length) {
