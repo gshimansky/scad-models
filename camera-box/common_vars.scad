@@ -47,7 +47,7 @@ bolt_hole_y_offset = -bolt_well_height;
 // Tail dimension
 tail_x_dim = socket_width + wall_thickness * 2;
 tail_y_dim = wire_length + wall_thickness;
-tail_z_dim = socket_height + wall_thickness + board_extra_size;
+tail_z_dim = socket_height + wall_thickness + board_extra_size + wall_thickness;
 
 // Hinge
 hinge_length = 10.0;
@@ -91,7 +91,7 @@ module tail() {
         }
         translate([tail_x_dim, tail_y_dim / 3, 0]) bolt_hole(true);
         translate([0, tail_y_dim / 3 * 2, 0]) bolt_hole(true);
-        translate([socket_width / 2 + wall_thickness, 50, socket_height / 2 + board_extra_size]) rotate(a=[90, 0, 0]) cylinder($fn = 24, d = wire_diameter, h = 100);
+        translate([socket_width / 2 + wall_thickness, 50, socket_height / 2 + board_extra_size + wall_thickness]) rotate(a=[90, 0, 0]) cylinder($fn = 24, d = wire_diameter, h = 100);
     }
 }
 

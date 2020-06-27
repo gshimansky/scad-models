@@ -24,7 +24,7 @@ module lens_screw_hole() {
 module tail_top() {
     difference() {
         tail();
-        translate([-bolt_well_diameter_wide / 2, 0, 0]) cube(size = [tail_x_dim + bolt_well_diameter_wide, tail_y_dim, socket_height / 2 + board_extra_size]);
+        translate([-bolt_well_diameter_wide / 2, 0, 0]) cube(size = [tail_x_dim + bolt_well_diameter_wide, tail_y_dim, socket_height / 2 + board_extra_size + wall_thickness]);
     }
 }
 
@@ -47,7 +47,7 @@ module back_panel() {
             translate([bolt_well_x_offset, bolt_well_y_offset, -bolt_well_z_offset]) bolt_well(false, bolt_well_height);
             translate([-bolt_well_x_offset, bolt_well_y_offset, -bolt_well_z_offset]) bolt_well(false, bolt_well_height);
             // Add tail
-            translate([-socket_width / 2 - wall_thickness, -wire_length - wall_thickness - screw_depth, -board_size / 2 - board_extra_size]) tail_top();
+            translate([-socket_width / 2 - wall_thickness, -wire_length - wall_thickness - screw_depth, -board_size / 2 - board_extra_size - wall_thickness]) tail_top();
         }
         translate([lens_screw_offset, 0, 0]) lens_screw_hole();
         translate([-lens_screw_offset, 0, 0]) lens_screw_hole();
@@ -56,7 +56,7 @@ module back_panel() {
         translate([bolt_well_x_offset, bolt_hole_y_offset, -bolt_well_z_offset]) bolt_hole(false);
         translate([-bolt_well_x_offset, bolt_hole_y_offset, -bolt_well_z_offset]) bolt_hole(false);
         // Socket cutout
-        translate([0, -wire_length / 2 - screw_depth, -board_size / 2 - board_extra_size + socket_height / 2]) socket_cutout();
+        translate([0, -wire_length / 2 + wall_thickness / 2 - screw_depth, -board_size / 2 - board_extra_size + socket_height / 2]) socket_cutout();
     }
 }
 
