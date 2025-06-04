@@ -19,9 +19,9 @@ proclip_curve_radius = 5.5;
 
 tilt_up_angle = 0;
 tilt_left_angle = 0;
-offset_right = 0;
+offset_right = (niche_width + wedge_wide_end * 2 - proclip_width) / 2 + 10;
 offset_forward = -proclip_depth;
-offset_up = 0;
+offset_up = (niche_height - proclip_height) / 2;
 
 module wedge () {
     wedge_points = [
@@ -33,6 +33,20 @@ module wedge () {
     polyRoundExtrude(wedge_points, niche_height, wedge_curve_radius, wedge_curve_radius, curve_divisions);
 }
 
+module proclip_holes() {
+    translate([-proclip_width / 2, 0, -proclip_height / 2])
+        rotate([90, 0, 0]) {
+            translate([proclip_hole_distance_from_side, proclip_hole_distance_from_top, 0])
+                cylinder(h=proclip_depth, d=proclip_hole_diameter, center=false, $fn=curve_divisions);
+            translate([proclip_width - proclip_hole_distance_from_side, proclip_hole_distance_from_top, 0])
+                cylinder(h=proclip_depth, d=proclip_hole_diameter, center=false, $fn=curve_divisions);
+            translate([proclip_width - proclip_hole_distance_from_side, proclip_height - proclip_hole_distance_from_top, 0])
+                cylinder(h=proclip_depth, d=proclip_hole_diameter, center=false, $fn=curve_divisions);
+            translate([proclip_hole_distance_from_side, proclip_height - proclip_hole_distance_from_top, 0])
+                cylinder(h=proclip_depth, d=proclip_hole_diameter, center=false, $fn=curve_divisions);
+        }
+}
+
 module magsafe_mount() {
     proclip_points = [
         [0, 0, proclip_curve_radius],
@@ -42,17 +56,7 @@ module magsafe_mount() {
     ];
     translate([-proclip_width / 2, 0, -proclip_height / 2])
         rotate([90, 0, 0])
-            difference() {
-                polyRoundExtrude(proclip_points, proclip_depth, 0, 1, curve_divisions);
-                translate([proclip_hole_distance_from_side, proclip_hole_distance_from_top, 0])
-                    cylinder(h=proclip_depth, d=proclip_hole_diameter, center=false, $fn=curve_divisions);
-                translate([proclip_width - proclip_hole_distance_from_side, proclip_hole_distance_from_top, 0])
-                    cylinder(h=proclip_depth, d=proclip_hole_diameter, center=false, $fn=curve_divisions);
-                translate([proclip_width - proclip_hole_distance_from_side, proclip_height - proclip_hole_distance_from_top, 0])
-                    cylinder(h=proclip_depth, d=proclip_hole_diameter, center=false, $fn=curve_divisions);
-                translate([proclip_hole_distance_from_side, proclip_height - proclip_hole_distance_from_top, 0])
-                    cylinder(h=proclip_depth, d=proclip_hole_diameter, center=false, $fn=curve_divisions);
-            }
+            polyRoundExtrude(proclip_points, proclip_depth, 0, 1, curve_divisions);
 }
 
 module connection() {
@@ -71,10 +75,15 @@ module connection() {
     }
 }
 
-union() {
-    wedge();
+difference() {
+    union() {
+        wedge();
+        rotate([-tilt_up_angle, 0, -tilt_left_angle])
+            translate([niche_width / 2 + wedge_wide_end + offset_right, -offset_forward, niche_height / 2 + offset_up])
+                magsafe_mount();
+    //    connection();
+    }
     rotate([-tilt_up_angle, 0, -tilt_left_angle])
         translate([niche_width / 2 + wedge_wide_end + offset_right, -offset_forward, niche_height / 2 + offset_up])
-            magsafe_mount();
-//    connection();
+            proclip_holes();
 }
